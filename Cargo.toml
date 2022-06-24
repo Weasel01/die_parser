@@ -2,6 +2,7 @@
 name = "die_parser"
 version = "1.0.0"
 authors = ["Florian Beizai <pp.beizai@gmx.de>"]
+repository = "https://github.com/Weasel01/die_parser"
 edition = "2021"
 description = "This crate parses the notation for die rolls as used in tabletop games like D&D."
 keywords = ["dice", "die", "roll", "parser", "dnd"]
