@@ -1,0 +1,29 @@
+# 🎲 die_parser
+
+This crate parses the notation for die rolls as used in tabletop games like D&D.
+
+It aims to do so in the most *simple*, *easy* and *lightweight* way possible.
+
+     Input:
+     1.) "2d6"         (Roll 2 six-sided dice.)
+     2.) "4d20 - 5"    (Roll 4 twenty-sided dice and subtract 5 from the result.)
+
+     Output:
+     1.)    Roll {
+             number_of_sides: 6
+             number_of_dice: 2
+             modifier: 0
+            }
+     2.)    Roll {
+             number_of_sides: 20
+             number_of_dice: 4
+             modifier: -5
+            }
+
+## ❓ Getting started:
+* Try *Roll::parse_roll()* !
+### 📖 Documentation:
+* [docs.rs/die_parser](https://docs.rs/die_parser)
+### ☕ Buy me a Coffee:
+If you like this crate, you can support my work here:
+* [Ko-Fi](http://ko-fi.com/fbeizai)

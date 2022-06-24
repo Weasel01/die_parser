@@ -1,0 +1,14 @@
+[package]
+name = "die_parser"
+version = "1.0.0"
+authors = ["Florian Beizai <pp.beizai@gmx.de>"]
+edition = "2021"
+description = "This crate parses the notation for die rolls as used in tabletop games like D&D."
+keywords = ["dice", "die", "roll", "parser", "dnd"]
+categories = ["parser-implementations", "games",]
+license = "Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nom = "7.1.1"
