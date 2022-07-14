@@ -3,7 +3,7 @@
 //! This crate parses the notation for die rolls as used in tabletop games like D&D.
 //!
 //! It aims to do so in the most *simple*, *easy* and *lightweight* way possible.
-//!
+//! ```rust,ignore
 //!     Input:
 //!     1.) "2d6"         (Roll 2 six-sided dice.)
 //!     2.) "4d20 - 5"    (Roll 4 twenty-sided dice and subtract 5 from the result.)
@@ -19,7 +19,7 @@
 //!             number_of_dice: 4
 //!             modifier: -5
 //!            }
-//!
+//! ```
 //! ## ❓ Getting started:
 //! **Try [Roll::parse_roll()]!**
 
@@ -28,7 +28,7 @@ use nom::character::complete::{char, digit1};
 use nom::combinator::{map, map_res};
 use nom::sequence::separated_pair;
 use nom::{branch, IResult};
-use std::fmt::{Display, Formatter};
+use std::fmt;
 
 use std::str::FromStr;
 
@@ -55,7 +55,7 @@ impl Roll {
     /// Parses a given input string with no regard to validity.
     fn parse_modified_roll(input: &str) -> Result<Roll, RollError> {
         // Remove whitespaces.
-        let whitespaceless = input.replace(" ", "");
+        let whitespaceless = input.replace(' ', "");
 
         // Parse type of die and amount of dice.
         let (remainder, (number_of_dice, number_of_sides)) =
@@ -96,7 +96,7 @@ impl Roll {
         // Check for amount of dice. If max_dice == 0 ~> no limit.
         if self.number_of_dice > max_dice && !max_dice != 0 {
             return Err(RollError::DiceExceedLimit);
-        } else if self.number_of_dice <= 0 {
+        } else if self.number_of_dice == 0 {
             return Err(RollError::NoDiceToRoll);
         }
 
@@ -127,10 +127,10 @@ impl Roll {
     pub fn parse_roll(input: &str) -> Result<Roll, RollError> {
         let result = Roll::parse_modified_roll(input)?;
 
-        return match result.check_roll_validity(100) {
+        match result.check_roll_validity(100) {
             Ok(()) => Ok(result),
             Err(e) => Err(e),
-        };
+        }
     }
 
     /// **Tries to parse input as roll notation (e.g. `4d20 + 5`).**
@@ -156,10 +156,10 @@ impl Roll {
         let result = Roll::parse_modified_roll(input)?;
 
         // Check if the roll is valid using the users max_dice value.
-        return match result.check_roll_validity(max_dice) {
+        match result.check_roll_validity(max_dice) {
             Ok(()) => Ok(result),
             Err(e) => Err(e),
-        };
+        }
     }
 }
 
@@ -174,7 +174,7 @@ pub enum RollError {
     /// use die_parser::{Roll, RollError};
     ///
     /// let invalid_roll = Roll::parse_roll("1d50");
-    /// assert_eq!(invalid_roll, RollError::DieTypeInvalid);
+    /// assert_eq!(invalid_roll, Err(RollError::DieTypeInvalid));
     /// ```
     DieTypeInvalid,
     /// Signifies that the requested amount of dice exceeded the set limit.
@@ -183,7 +183,7 @@ pub enum RollError {
     /// use die_parser::{Roll, RollError};
     ///
     /// let invalid_roll = Roll::parse_roll("9001d20");
-    /// assert_eq!(invalid_roll, RollError::DiceExceedLimit);
+    /// assert_eq!(invalid_roll, Err(RollError::DiceExceedLimit));
     /// ```
     DiceExceedLimit,
     /// Signifies that the requested amount of dice was less than 1.
@@ -192,7 +192,7 @@ pub enum RollError {
     /// use die_parser::{Roll, RollError};
     ///
     /// let invalid_roll = Roll::parse_roll("0d20");
-    /// assert_eq!(invalid_roll, RollError::NoDiceToRoll);
+    /// assert_eq!(invalid_roll, Err(RollError::NoDiceToRoll));
     /// ```
     NoDiceToRoll,
     /// Signifies that the input string was malformed.
@@ -200,14 +200,14 @@ pub enum RollError {
     /// ```
     /// use die_parser::{Roll, RollError};
     ///
-    /// let invalid_roll = Roll::parse_roll("4d2invalid_characters+5");
-    /// assert_eq!(invalid_roll, RollError::ParsingError);
+    /// let invalid_roll = Roll::parse_roll("4invalid_charactersd20+5");
+    /// assert_eq!(invalid_roll, Err(RollError::ParsingError));
     ///
     /// ```
     ParsingError,
 }
-impl Display for RollError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+impl fmt::Display for RollError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::DieTypeInvalid => write!(f, "The requested type of die is invalid."),
             Self::DiceExceedLimit => write!(f, "Amount of dice exceeds the specified limit."),
@@ -244,7 +244,7 @@ fn parse_modifier(s: &str) -> IResult<&str, i32> {
     // Generate i32.
     match operator {
         "+" => map(parse_numbers, |modifier| modifier as i32)(remainder),
-        "-" => map(parse_numbers, |modifier| modifier as i32 * -1)(remainder),
+        "-" => map(parse_numbers, |modifier| -(modifier as i32))(remainder),
         // Return 0 as modifier if no operator signalling a modifier was found.
         _ => Ok((remainder, 0)),
     }

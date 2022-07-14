@@ -1,6 +1,6 @@
 [package]
 name = "die_parser"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Florian Beizai <pp.beizai@gmx.de>"]
 repository = "https://github.com/Weasel01/die_parser"
 edition = "2021"
